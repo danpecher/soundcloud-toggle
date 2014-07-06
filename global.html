@@ -1,9 +1,18 @@
 <script>
+	var status = 'play';
 	function performCommand() {
 		var index,src,foundTab = false;
 		var tabs = safari.application.activeBrowserWindow.tabs;
 		for( index = 0; index < tabs.length; index++ ) {
 			if( typeof tabs[index].url !== 'undefined' && tabs[index].url.indexOf( 'https://soundcloud.com' ) !== -1) {
+				if( status === 'stop' ) {
+					safari.extension.toolbarItems[0].image = safari.extension.toolbarItems[0].image.replace('stop', 'play');
+					status = 'play';
+				}
+				else {
+					safari.extension.toolbarItems[0].image = safari.extension.toolbarItems[0].image.replace('play', 'stop');
+					status = 'stop';
+				}
 				tabs[index].page.dispatchMessage("toggle");
 				foundTab = true;
 			}
@@ -11,8 +20,16 @@
 
 		if ( foundTab === false ) {
 			var newTab = safari.application.activeBrowserWindow.openTab();
-			newTab.url = 'https://soundcloud.com/tracks';
+			newTab.url = 'https://soundcloud.com/explore';
 		}
 	}
 	safari.application.addEventListener("command", performCommand, false);
+	safari.application.addEventListener("beforeNavigate", function(e){
+		console.log(e);
+	}, false);
+	safari.application.addEventListener("close", function(e){
+		if (e.target instanceof SafariBrowserTab) {
+			console.log(e.target.title, e.target.url);
+		}
+	}, true);
 </script>
