@@ -1,0 +1,18 @@
+<script>
+	function performCommand() {
+		var index,src,foundTab = false;
+		var tabs = safari.application.activeBrowserWindow.tabs;
+		for( index = 0; index < tabs.length; index++ ) {
+			if( typeof tabs[index].url !== 'undefined' && tabs[index].url.indexOf( 'https://soundcloud.com' ) !== -1) {
+				tabs[index].page.dispatchMessage("toggle");
+				foundTab = true;
+			}
+		}
+
+		if ( foundTab === false ) {
+			var newTab = safari.application.activeBrowserWindow.openTab();
+			newTab.url = 'https://soundcloud.com/tracks';
+		}
+	}
+	safari.application.addEventListener("command", performCommand, false);
+</script>
